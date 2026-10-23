@@ -94,3 +94,26 @@ def test_weekly_message_format():
                                 "https://ai.platform.internal/finops/warranty")
     assert msg.splitlines()[0] == "AI spend — warranty-assistant — week 41"
     assert "▲ 6% vs 4-week avg" in msg and "▼ 4%" in msg
+
+
+def test_lever_ranking_orders_levers_per_feature(data):
+    _, con = data
+    sql = pipeline.render((ROOT / "finops" / "queries" / "lever_ranking.sql").read_text(), pipeline.params("2026-05"))
+    rows = q(con, sql)
+    first = {(r[0], r[1]): r[3] for r in rows if r[5] == 1}
+    assert first[("cx-warranty", "claim-triage")] == "batch"            # declared latency-tolerant
+    assert first[("support-chatbot", "refund-flow")] in ("prompt_caching", "output_discipline")
+
+
+def test_declared_batch_job_does_not_page(data):
+    out, _ = data
+    events = [json.loads(l) for l in (out / "gateway_events.jsonl").read_text().splitlines()]
+    assert anomaly.detect(events, declared_jobs={("support-chatbot", "refund-flow")}) == []
+
+
+@pytest.mark.parametrize("name", ["executive", "finops", "tenant"])
+def test_dashboard_queries_run(data, name):
+    _, con = data
+    sql = (ROOT / "finops" / "queries" / "dashboards" / f"{name}.sql").read_text()
+    sql = sql.replace("{{month}}", "2026-05").replace("{{tenant}}", "support-chatbot")
+    assert q(con, sql)

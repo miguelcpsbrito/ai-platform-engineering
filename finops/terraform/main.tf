@@ -11,23 +11,6 @@ terraform {
   }
 }
 
-variable "prefix" {
-  type    = string
-  default = "platform-finops"
-}
-variable "gateway_role_arn" {
-  description = "identity/ gateway role: the only producer on the metering stream."
-  type        = string
-}
-variable "athena_bytes_scanned_cutoff" {
-  type    = number
-  default = 10737418240 # 10 GiB per query
-}
-variable "tags" {
-  type    = map(string)
-  default = { "managed-by" = "ai-platform-engineering/finops", "cost-center" = "platform" }
-}
-
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
@@ -185,17 +168,4 @@ resource "aws_athena_workgroup" "finops" {
     }
   }
   tags = var.tags
-}
-
-output "metering_stream" {
-  value = aws_kinesis_firehose_delivery_stream.metering.name
-}
-output "raw_bucket" {
-  value = aws_s3_bucket.raw.bucket
-}
-output "curated_bucket" {
-  value = aws_s3_bucket.curated.bucket
-}
-output "athena_workgroup" {
-  value = aws_athena_workgroup.finops.name
 }

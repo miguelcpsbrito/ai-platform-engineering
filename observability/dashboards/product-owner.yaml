@@ -1,0 +1,11 @@
+# Persona dashboard specification (Section 8.6, "Fixed panels per persona dashboard"). Fixed panels, versioned.
+dashboard: product-owner
+version: 1
+reads:
+- finops+harness
+join_key: trace_id
+panels:
+- title: Cost per outcome beside resolution rate and sampled score
+  source: finops+harness
+  query: cost per resolved conversation, resolution rate, mean sampled score — one
+    time axis

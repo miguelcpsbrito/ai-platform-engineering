@@ -5,3 +5,4 @@
 - `collector/adot-collector.yaml` — ADOT config: content attributes dropped, traces to the CloudWatch OTLP endpoint with SigV4, metrics via EMF.
 
 `pip install ./observability` installs `platform-eval` (and the SDK).
+- `dashboards/*.yaml` — the five persona dashboards of Section 8.6 as panel specifications (title, source, query), all joined on the trace ID. Rendering them in CloudWatch or Grafana is deployment-specific and not in this release.

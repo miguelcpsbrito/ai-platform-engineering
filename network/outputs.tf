@@ -31,3 +31,7 @@ output "dns_query_log_group" {
 output "vpc_cidr" {
   value = var.cidr
 }
+
+output "transit_gateway_id" {
+  value = try(aws_ec2_transit_gateway.hub[0].id, null)
+}

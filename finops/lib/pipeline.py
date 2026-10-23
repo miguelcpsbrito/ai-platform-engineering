@@ -14,6 +14,15 @@ FINOPS = pathlib.Path(__file__).resolve().parents[1]
 STEPS = sorted((FINOPS / "allocation").glob("0*.sql"))
 
 
+def _model_prices_values() -> str:
+    prices = yaml.safe_load((FINOPS.parent / "gateway" / "prices.yaml").read_text())["models"]
+    rows = []
+    for key, p in prices.items():
+        model = key.split("/", 1)[1] if key.startswith("mock/") else key
+        rows.append(f"('{model}', {p['input']}, {p['output']})")
+    return ", ".join(rows)
+
+
 def params(month: str, rules: dict | None = None) -> dict:
     rules = rules or yaml.safe_load((FINOPS / "allocation" / "rules.yaml").read_text())
     def pred(kind, col="usage_type"):
@@ -24,6 +33,8 @@ def params(month: str, rules: dict | None = None) -> dict:
         "bedrock_service": rules["bedrock_service"],
         "invocation_predicate": pred("invocation"), "provisioned_predicate": pred("provisioned"),
         "provisioned_predicate_c": pred("provisioned", "c.usage_type"),
+        "model_prices_values": _model_prices_values(),
+        "latency_tolerant_features": ", ".join(f"'{f}'" for f in rules.get("latency_tolerant_features", ["-"])),
     }
 
 

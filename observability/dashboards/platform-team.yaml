@@ -1,0 +1,25 @@
+# Persona dashboard specification (Section 8.6, "Fixed panels per persona dashboard"). Fixed panels, versioned.
+dashboard: platform-team
+version: 1
+reads:
+- ci
+- finops
+- portal
+- traces
+join_key: trace_id
+panels:
+- title: Adoption
+  source: finops
+  query: governed share of AI spend (gateway vs CUR)
+- title: Template drift
+  source: portal
+  query: instances per blueprint version behind latest
+- title: Leakage-test status
+  source: ci
+  query: last run time and result of tests/leakage per environment
+- title: Convention versions
+  source: traces
+  query: OTel GenAI semantic-convention version per service
+- title: Platform's own costs
+  source: finops
+  query: allocated_costs where cost_type = 'allocation' and component = 'shared'

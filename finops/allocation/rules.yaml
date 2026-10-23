@@ -9,3 +9,5 @@ bedrock_service: AmazonBedrock
 patterns:                 # CUR usage_type patterns (LIKE syntax)
   invocation: ["%input-tokens%", "%output-tokens%", "%cache-read%", "%cache-write%"]
   provisioned: ["%ProvisionedThroughput%"]
+latency_tolerant_features: [claim-triage]   # declared by tenants; batch-lever candidates
+declared_batch_jobs: []                     # (tenant, feature) the anomaly layer ignores

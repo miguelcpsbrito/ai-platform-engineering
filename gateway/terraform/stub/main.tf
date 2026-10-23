@@ -12,56 +12,6 @@ terraform {
   }
 }
 
-variable "name" {
-  type    = string
-  default = "platform-gateway-stub"
-}
-variable "package_dir" {
-  description = "Directory produced by `make -C gateway package`."
-  type        = string
-}
-variable "role_arn" {
-  description = "identity/'s gateway_role_arn (trusts lambda.amazonaws.com)."
-  type        = string
-}
-variable "role_name" {
-  type = string
-}
-variable "subnet_ids" {
-  type = list(string)
-}
-variable "vpc_id" {
-  type = string
-}
-variable "vpc_cidr" {
-  type = string
-}
-variable "profile_map" {
-  description = "gateway/terraform/profiles output: tenant|model|region → profile ARN."
-  type        = map(string)
-}
-variable "guardrails" {
-  description = "Risk tier → {guardrailIdentifier, guardrailVersion}. Empty until Chapter 10."
-  type        = map(object({ guardrailIdentifier = string, guardrailVersion = string }))
-  default     = {}
-}
-variable "environment" {
-  type    = string
-  default = "prod"
-}
-variable "invoker_role_arns" {
-  description = "Tenant workload roles allowed to call the function URL."
-  type        = list(string)
-}
-variable "log_retention_days" {
-  type    = number
-  default = 30
-}
-variable "tags" {
-  type    = map(string)
-  default = { "managed-by" = "ai-platform-engineering/gateway" }
-}
-
 data "aws_caller_identity" "current" {}
 
 data "archive_file" "package" {
@@ -139,8 +89,8 @@ resource "aws_lambda_function_url" "gateway" {
 
 # Only tenant roles listed in tenant records may invoke (responsibility 1).
 resource "aws_lambda_permission" "invoke_url" {
-  for_each               = toset(var.invoker_role_arns)
-  statement_id           = "url-${substr(sha1(each.value), 0, 12)}"
+  for_each               = var.invokers
+  statement_id           = "url-${each.key}"
   action                 = "lambda:InvokeFunctionUrl"
   function_name          = aws_lambda_function.gateway.function_name
   principal              = each.value
@@ -148,18 +98,9 @@ resource "aws_lambda_permission" "invoke_url" {
 }
 
 resource "aws_lambda_permission" "invoke_function" {
-  for_each      = toset(var.invoker_role_arns)
-  statement_id  = "fn-${substr(sha1(each.value), 0, 12)}"
+  for_each      = var.invokers
+  statement_id  = "fn-${each.key}"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.gateway.function_name
   principal     = each.value
-}
-
-output "url" {
-  description = "The platform API base URL for the minimal platform."
-  value       = aws_lambda_function_url.gateway.function_url
-}
-
-output "log_group" {
-  value = aws_cloudwatch_log_group.gateway.name
 }

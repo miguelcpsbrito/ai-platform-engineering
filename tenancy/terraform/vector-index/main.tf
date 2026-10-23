@@ -9,33 +9,6 @@ terraform {
   }
 }
 
-variable "name" {
-  description = "Collection name: 3–28 lowercase characters."
-  type        = string
-  default     = "platform-chunks"
-}
-variable "vpc_id" {
-  type = string
-}
-variable "subnet_ids" {
-  type = list(string)
-}
-variable "security_group_ids" {
-  type = list(string)
-}
-variable "reader_role_arns" {
-  description = "Roles that query (the platform retrieval library's callers)."
-  type        = list(string)
-}
-variable "writer_role_arns" {
-  description = "Roles that ingest (blueprint ingestion jobs)."
-  type        = list(string)
-}
-variable "tags" {
-  type    = map(string)
-  default = { "managed-by" = "ai-platform-engineering/tenancy" }
-}
-
 resource "aws_opensearchserverless_vpc_endpoint" "this" {
   name               = "${var.name}-vpce"
   vpc_id             = var.vpc_id
@@ -90,8 +63,4 @@ resource "aws_opensearchserverless_collection" "this" {
   tags             = var.tags
   depends_on = [aws_opensearchserverless_security_policy.encryption,
   aws_opensearchserverless_security_policy.network]
-}
-
-output "endpoint" {
-  value = aws_opensearchserverless_collection.this.collection_endpoint
 }

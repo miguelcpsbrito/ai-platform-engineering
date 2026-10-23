@@ -1,0 +1,28 @@
+# Persona dashboard specification (Section 8.6, "Fixed panels per persona dashboard"). Fixed panels, versioned.
+dashboard: developer
+version: 1
+reads:
+- app-metrics
+- harness
+- repo
+- traces
+join_key: trace_id
+panels:
+- title: Slowest traces
+  source: traces
+  query: sort latency desc, filter platform.tenant = $tenant, limit 20
+- title: Costliest traces
+  source: traces
+  query: sort platform.cost_usd desc, filter platform.tenant = $tenant, limit 20
+- title: Worst-scored traces
+  source: harness
+  query: sampled judgments for $tenant, sort score asc, limit 20
+- title: Eval trend per criteria pack
+  source: harness
+  query: mean score by criterion, 1h buckets
+- title: Suite freshness
+  source: repo
+  query: age of the newest case in evals/ per suite
+- title: Implicit-signal lines
+  source: app-metrics
+  query: thumbs-down, retry, copy rates per 1k sessions

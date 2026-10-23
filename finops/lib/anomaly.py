@@ -42,9 +42,14 @@ def hourly(events):
     return burn, calls, convos
 
 
-def detect(events, ratio: float = 5.0, min_usd: float = 1.0, history_hours: int = 72) -> list[Page]:
+def detect(events, ratio: float = 5.0, min_usd: float = 1.0, history_hours: int = 72,
+           declared_jobs: set | None = None) -> list[Page]:
     """Flag hours whose burn exceeds `ratio` x the median of the same series' previous
-    `history_hours` hours (and an absolute floor, so idle features do not page)."""
+    `history_hours` hours (and an absolute floor, so idle features do not page).
+    Spend from declared batch jobs (tenant, feature) is ignored: a nightly backfill is
+    not an anomaly (Section 6.6)."""
+    declared = declared_jobs or set()
+    events = [e for e in events if (e["tenant"], e["feature"]) not in declared]
     burn, calls, convos = hourly(events)
     series = defaultdict(list)
     for (t, f, h), v in sorted(burn.items(), key=lambda kv: kv[0][2]):

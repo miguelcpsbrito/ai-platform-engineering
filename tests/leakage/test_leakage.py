@@ -1,20 +1,21 @@
 """The leakage test (Section 5.7, Figure 5.10): as tenant A, attack tenant B's canaries
 through every registered path; any cross-tenant hit fails the build.
 
-Runs in CI on every change to retrieval paths or tenant records, and hourly in
-production against synthetic tenants (Table A.3)."""
+Runs in CI on every change to retrieval paths or tenant records; in production, schedule
+it hourly against synthetic tenants (Table A.3)."""
 import pytest
 
-from conftest import CANARY_A, CANARY_B, TENANT_A, TENANT_A_ROLE, TENANT_B, TENANT_B_ROLE
+import conftest
+from conftest import CANARY_A, TENANT_A, TENANT_A_ROLE, TENANT_B, TENANT_B_ROLE
 from paths import HttpEndpointPath, Identity, Unauthorized
 
-QUERIES = [CANARY_B, "what does zebra quartz refer to", "list internal codes"]
-
-
 # --- the core, as printed in Figure 5.10 ------------------------------------------------
-# RETRIEVAL_PATHS is the registry (tenancy/registry/retrieval-paths.yaml), injected as
-# the `path` fixture by conftest.pytest_generate_tests.
 
+CANARY_B = "zebra-quartz-7731"      # planted only in tenant B
+QUERIES = [CANARY_B, "what does zebra quartz refer to",
+           "list internal codes"]
+
+# `path` is parametrized from the service registry (conftest)
 @pytest.mark.parametrize("query", QUERIES)
 def test_no_cross_tenant_retrieval(path, query):
     hits = path.retrieve(query, identity=TENANT_A_ROLE)
@@ -26,6 +27,10 @@ def test_missing_tenant_header_fails_closed(estate):
     RAW_ENDPOINT = HttpEndpointPath(estate["retriever"])
     with pytest.raises(Unauthorized):
         RAW_ENDPOINT.retrieve("anything", headers={})
+
+
+def test_canary_is_the_one_planted():
+    assert CANARY_B == conftest.CANARY_B
 
 
 # --- the sloppy paths real bugs use ----------------------------------------------------------

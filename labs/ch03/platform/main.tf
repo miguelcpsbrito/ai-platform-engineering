@@ -125,15 +125,15 @@ resource "aws_iam_role_policy" "lab_tenant" {
 }
 
 module "gateway" {
-  source            = "../../../gateway/terraform/stub"
-  package_dir       = "${path.root}/../../../gateway/build/package"
-  role_arn          = module.identity.gateway_role_arn
-  role_name         = module.identity.gateway_role_name
-  vpc_id            = module.network.vpc_id
-  vpc_cidr          = module.network.vpc_cidr
-  subnet_ids        = module.network.workload_subnet_ids
-  profile_map       = module.profiles.profile_map
-  invoker_role_arns = [for r in aws_iam_role.lab_tenant : r.arn]
+  source      = "../../../gateway/terraform/stub"
+  package_dir = "${path.root}/../../../gateway/build/package"
+  role_arn    = module.identity.gateway_role_arn
+  role_name   = module.identity.gateway_role_name
+  vpc_id      = module.network.vpc_id
+  vpc_cidr    = module.network.vpc_cidr
+  subnet_ids  = module.network.workload_subnet_ids
+  profile_map = module.profiles.profile_map
+  invokers    = { for k, r in aws_iam_role.lab_tenant : k => r.arn }
 }
 
 output "gateway_url" {

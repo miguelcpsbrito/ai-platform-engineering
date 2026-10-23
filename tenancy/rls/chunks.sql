@@ -20,9 +20,9 @@ ALTER TABLE chunks FORCE ROW LEVEL SECURITY;
 CREATE POLICY tenant_isolation ON chunks
   USING (tenant_id = NULLIF(
          current_setting('app.tenant_id', true), '')::uuid);
--- unset → NULL → no rows: the policy fails closed. NULLIF matters on pooled
--- connections: after a SET LOCAL ends, the setting reads '' rather than NULL
+-- unset → NULL → no rows: the policy fails closed
 -- the application role owns nothing and is not BYPASSRLS
+-- (NULLIF: on a pooled connection the setting reads '' after an earlier SET LOCAL)
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'platform_app') THEN

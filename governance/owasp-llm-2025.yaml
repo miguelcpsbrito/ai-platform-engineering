@@ -1,0 +1,85 @@
+# OWASP Top 10 for LLM Applications (2025) mapped to owners and platform controls (Section 10.7).
+edition: '2025'
+mapping:
+- risk: LLM01 Prompt Injection
+  owner: Shared
+  controls:
+  - Prompt-attack filter
+  - tool risk classes
+  - single retrieval path
+  in_repository:
+  - governance/redteam (LLM01 family)
+  - agents/registry
+  - tenancy/platform_retrieval
+- risk: LLM02 Sensitive Information Disclosure
+  owner: Platform
+  controls:
+  - DLP at the gateway
+  - data-class matrix
+  - masking before storage
+  in_repository:
+  - gateway data-class matrix
+  - governance guardrails (PII)
+  - observability collector redaction
+- risk: LLM03 Supply Chain
+  owner: Platform
+  controls:
+  - Model onboarding review
+  - pinned proxy images
+  - registry for tools
+  in_repository:
+  - docs/templates/model-onboarding.md
+  - gateway/terraform/proxy/app (pinned image)
+  - agents/registry
+- risk: LLM04 Data and Model Poisoning
+  owner: Shared
+  controls:
+  - Ingestion allowlists
+  - provenance per chunk
+  - quarantine stages
+  in_repository:
+  - blueprint ingestion (team-owned)
+- risk: LLM05 Improper Output Handling
+  owner: Shared
+  controls:
+  - Encoding defaults in blueprints
+  - teams own their sinks
+  in_repository:
+  - governance OutputContract (layer 3)
+- risk: LLM06 Excessive Agency
+  owner: Team, platform-supported
+  controls:
+  - Tool registry, approval policy, budgets (Chapter 12)
+  in_repository:
+  - agents/platform_agents
+- risk: LLM07 System Prompt Leakage
+  owner: Team
+  controls:
+  - 'Guidance: no secrets in prompts'
+  - secrets stay in Secrets Manager
+  in_repository:
+  - blueprints prompts guidance
+- risk: LLM08 Vector and Embedding Weaknesses
+  owner: Platform
+  controls:
+  - Tenant isolation levels
+  - leakage test
+  - embedding classification
+  in_repository:
+  - tests/leakage
+  - tenancy/rls
+- risk: LLM09 Misinformation
+  owner: Shared
+  controls:
+  - Grounding checks
+  - level-3 quality monitoring
+  in_repository:
+  - observability/platform_eval
+- risk: LLM10 Unbounded Consumption
+  owner: Platform
+  controls:
+  - Quotas, budgets, kill switches, per-identity rate shaping
+  in_repository:
+  - gateway admission (quotas)
+  - agents budgets and kill switch
+  - finops anomaly

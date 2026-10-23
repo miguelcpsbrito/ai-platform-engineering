@@ -11,47 +11,6 @@ terraform {
   }
 }
 
-variable "name" {
-  type    = string
-  default = "platform-gateway"
-}
-variable "vpc_id" {
-  type = string
-}
-variable "vpc_cidr" {
-  type = string
-}
-variable "subnet_ids" {
-  description = "network/ workload subnets, at least two AZs."
-  type        = list(string)
-}
-variable "gateway_role_arn" {
-  description = "identity/ gateway role; bound to the proxy's service account by Pod Identity."
-  type        = string
-}
-variable "kubernetes_version" {
-  type    = string
-  default = "1.33"
-}
-variable "public_endpoint" {
-  description = "Public API endpoint for labs run from a laptop. False in production."
-  type        = bool
-  default     = true
-}
-variable "admin_principal_arns" {
-  description = "Principals granted cluster admin through access entries."
-  type        = list(string)
-}
-variable "db_min_acu" {
-  description = "Aurora Serverless v2 floor. 0 enables auto-pause (lab cost); use >= 0.5 in production."
-  type        = number
-  default     = 0
-}
-variable "tags" {
-  type    = map(string)
-  default = { "managed-by" = "ai-platform-engineering/gateway" }
-}
-
 # --- EKS Auto Mode ----------------------------------------------------------------
 
 data "aws_iam_policy_document" "cluster_trust" {
@@ -235,26 +194,4 @@ resource "aws_elasticache_serverless_cache" "counters" {
   subnet_ids           = slice(var.subnet_ids, 0, min(length(var.subnet_ids), 3))
   security_group_ids   = [aws_security_group.state.id]
   tags                 = var.tags
-}
-
-output "cluster_name" {
-  value = aws_eks_cluster.this.name
-}
-output "cluster_endpoint" {
-  value = aws_eks_cluster.this.endpoint
-}
-output "cluster_ca" {
-  value = aws_eks_cluster.this.certificate_authority[0].data
-}
-output "db_endpoint" {
-  value = aws_rds_cluster.state.endpoint
-}
-output "db_master_secret_arn" {
-  value = aws_rds_cluster.state.master_user_secret[0].secret_arn
-}
-output "valkey_endpoint" {
-  value = aws_elasticache_serverless_cache.counters.endpoint[0].address
-}
-output "valkey_port" {
-  value = aws_elasticache_serverless_cache.counters.endpoint[0].port
 }

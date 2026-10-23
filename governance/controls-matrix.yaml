@@ -1,0 +1,51 @@
+# The controls matrix (Table 10.1): risk x control x owner x evidence, with where each lives here.
+# A control without producible evidence is a wish.
+controls:
+- risk: Unapproved model use
+  control: SCP allowlist + gateway alias entitlements
+  owner: Platform
+  evidence: Denied-call logs; catalog vs config diff
+  in_repository:
+  - org/scps
+  - gateway/platform_gateway/config.py
+- risk: Sensitive data to wrong model class
+  control: Data-class x model-class matrix at gateway (10.3)
+  owner: Platform
+  evidence: Blocked-request samples; matrix version history
+  in_repository:
+  - gateway/contracts
+  - governance/platform_governance
+- risk: Harmful content out
+  control: Layered guardrails (10.2)
+  owner: Platform + team
+  evidence: Red-team suite results; verdict monitoring
+  in_repository:
+  - governance/guardrails
+  - governance/redteam
+- risk: Untraceable usage
+  control: 'Audit trail: CloudTrail + gateway metadata (10.4)'
+  owner: Platform
+  evidence: Trail retrieval drill, timed
+  in_repository:
+  - gateway/platform_gateway/metering.py
+  - governance audit drill
+- risk: Ungoverned use case
+  control: Intake with auto-tiering (10.5)
+  owner: Teams + committee
+  evidence: Intake records; % auto-approved
+  in_repository:
+  - governance/intake
+  - docs/templates/intake.md
+- risk: Subject-rights failure
+  control: Deletion pipeline with verification (10.6)
+  owner: Platform
+  evidence: Continuous synthetic-subject test
+  in_repository:
+  - governance/platform_governance (delete_subject)
+- risk: Cross-tenant exposure
+  control: Isolation levels + leakage test (Ch. 5)
+  owner: Platform
+  evidence: Leakage-test badge, public
+  in_repository:
+  - tests/leakage
+  - tenancy/rls

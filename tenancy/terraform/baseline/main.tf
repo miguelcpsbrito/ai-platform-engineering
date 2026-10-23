@@ -11,22 +11,6 @@ terraform {
   }
 }
 
-variable "tenant" {
-  description = "Stable tenant ID from the tenant record (5.6)."
-  type        = string
-}
-variable "monthly_budget_usd" {
-  type = number
-}
-variable "alert_emails" {
-  description = "The tenant team's channel address (an email-to-channel bridge works)."
-  type        = list(string)
-}
-variable "tags" {
-  type    = map(string)
-  default = {}
-}
-
 data "aws_caller_identity" "current" {}
 
 resource "aws_kms_key" "tenant" {
@@ -62,8 +46,4 @@ resource "aws_budgets_budget" "tenant" {
     notification_type          = "ACTUAL"
     subscriber_email_addresses = var.alert_emails
   }
-}
-
-output "kms_key_arn" {
-  value = aws_kms_key.tenant.arn
 }

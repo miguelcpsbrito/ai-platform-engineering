@@ -10,11 +10,6 @@ terraform {
   }
 }
 
-variable "tags" {
-  type    = map(string)
-  default = { "managed-by" = "ai-platform-engineering/governance", "cost-center" = "platform" }
-}
-
 locals {
   content_filters = ["HATE", "INSULTS", "SEXUAL", "VIOLENCE", "MISCONDUCT"]
   strength = {
@@ -84,14 +79,4 @@ resource "aws_bedrock_guardrail_version" "tier" {
   for_each      = aws_bedrock_guardrail.tier
   guardrail_arn = each.value.guardrail_arn
   description   = "Released by governance/guardrails"
-}
-
-output "guardrails" {
-  description = "Risk tier → guardrail id and version: the gateway's PLATFORM_GUARDRAILS."
-  value = {
-    for k, g in aws_bedrock_guardrail.tier : trimprefix(k, "tier") => {
-      guardrailIdentifier = g.guardrail_id
-      guardrailVersion    = aws_bedrock_guardrail_version.tier[k].version
-    }
-  }
 }

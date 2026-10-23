@@ -1,0 +1,19 @@
+# Persona dashboard specification (Section 8.6, "Fixed panels per persona dashboard"). Fixed panels, versioned.
+dashboard: finops
+version: 1
+reads:
+- finops
+join_key: trace_id
+panels:
+- title: Spend by tenant and feature
+  source: finops
+  query: finops/queries/dashboards/executive.sql + tenant.sql
+- title: Anomaly list with drill-through
+  source: finops
+  query: finops/lib/anomaly.py pages → features → trace IDs
+- title: Reconciliation drift
+  source: finops
+  query: finops/queries/reconciliation.sql
+- title: Idle provisioned throughput
+  source: finops
+  query: allocated_costs where tenant = '_platform_idle'

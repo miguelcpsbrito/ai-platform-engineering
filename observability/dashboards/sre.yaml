@@ -1,0 +1,26 @@
+# Persona dashboard specification (Section 8.6, "Fixed panels per persona dashboard"). Fixed panels, versioned.
+dashboard: sre
+version: 1
+reads:
+- metering
+- metrics
+join_key: trace_id
+panels:
+- title: TTFT and tokens/second per alias
+  source: metrics
+  query: Platform/GenAI TimeToFirstToken p50/p99 by alias; AWS/Bedrock TimeToFirstToken
+- title: Throttles by origin
+  source: metering
+  query: '429 count split: tenant quota vs upstream throttling'
+- title: Quota headroom
+  source: metrics
+  query: AWS/Bedrock EstimatedTPMQuotaUsage vs quota, per model and region
+- title: Fallback rate
+  source: metering
+  query: share of status=200 events with fallback=true, 5m
+- title: Gateway health
+  source: metrics
+  query: 5xx rate, replicas ready, p99 added latency
+- title: Contention minutes
+  source: metering
+  query: minutes with any critical-class 429 or queueing

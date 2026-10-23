@@ -66,3 +66,15 @@ variable "tags" {
   type    = map(string)
   default = { "managed-by" = "ai-platform-engineering/network" }
 }
+
+variable "create_transit_gateway" {
+  description = "Create the hub Transit Gateway for spoke VPCs (3.3). Off for the single-account lab."
+  type        = bool
+  default     = false
+}
+
+variable "tgw_share_principals" {
+  description = "Organization or OU ARNs the Transit Gateway is shared with through RAM (e.g. the Workloads OU)."
+  type        = list(string)
+  default     = []
+}

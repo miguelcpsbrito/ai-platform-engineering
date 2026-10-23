@@ -42,3 +42,12 @@ def test_unapproved_region_denied():
     import boto3
     r = _code(lambda: boto3.client("ec2", region_name="sa-east-1").describe_vpcs())
     assert "UnauthorizedOperation" in r or "AccessDenied" in r
+
+
+@pytest.mark.skipif(not os.environ.get("SCP_PROFILE_ARN"), reason="set SCP_PROFILE_ARN to an approved application profile")
+def test_approved_application_profile_succeeds():
+    import boto3
+    brt = boto3.client("bedrock-runtime", region_name=REGION)
+    r = _code(lambda: brt.converse(modelId=os.environ["SCP_PROFILE_ARN"], inferenceConfig={"maxTokens": 8},
+                                   messages=[{"role": "user", "content": [{"text": "hi"}]}]))
+    assert r == "OK", r

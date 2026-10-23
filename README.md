@@ -1,7 +1,7 @@
 # AI Platform Engineering — Reference Repository
 
 **Companion repository for the book**
-> *AI Platform Engineering* — Miguel Brito
+> *AI Platform Engineering* — Miguel Brito · Book 3 of the *Architecture for AI* series
 
 [![CI](https://github.com/miguelcpsbrito/ai-platform-engineering/actions/workflows/ci.yml/badge.svg)](https://github.com/miguelcpsbrito/ai-platform-engineering/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -50,7 +50,7 @@ ai-platform-engineering/
 | Module | Implements | Book | Labs |
 |---|---|---|---|
 | [`org/`](org/) | OUs, the three AI SCPs, tag policy | 3.1 | ch03 |
-| [`network/`](network/) | Hub VPC, private endpoints, DNS Firewall egress control, optional Network Firewall | 3.3 | ch03 |
+| [`network/`](network/) | Hub VPC, private endpoints, DNS Firewall egress control, optional Network Firewall and Transit Gateway | 3.3 | ch03 |
 | [`identity/`](identity/) | Gateway role, tenant permission boundary, model approver, break-glass, Identity Center | 3.4 | ch03 |
 | [`gateway/`](gateway/) | Alias map, tenant records, reference custom gateway, LiteLLM renderer, fault layer, Terraform (profiles, stub, proxy on EKS) | 4, 5.2, 9.5 | ch03, ch04, ch09 |
 | [`tenancy/`](tenancy/) | Tenant schema, retrieval library (in-memory, pgvector + RLS, OpenSearch), registry and baseline Terraform | 5 | ch05 |
