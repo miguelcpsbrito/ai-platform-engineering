@@ -1,0 +1,11 @@
+# Seed criteria pack (Section 8.4): what every blueprint starts with, before the team
+# grows its own. Scores are 0..1; the regression detector watches their means.
+pack: seed
+version: 3
+criteria:
+  - name: grounding
+    rubric: "Is every factual claim supported by the retrieved context? 1 = fully, 0 = not at all."
+  - name: helpfulness
+    rubric: "Does the answer address the user's question directly and completely?"
+  - name: format
+    rubric: "Does the answer follow the service's output contract (length, structure, tone)?"

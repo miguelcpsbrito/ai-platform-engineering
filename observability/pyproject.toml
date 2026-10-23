@@ -1,0 +1,19 @@
+[project]
+name = "platform-eval"
+version = "0.1.0"
+description = "Platform SDK and evaluation harness from AI Platform Engineering (Chapters 7-9)"
+requires-python = ">=3.11"
+dependencies = ["pyyaml>=6", "opentelemetry-api>=1.27"]
+
+[project.scripts]
+platform-eval = "platform_eval.cli:main"
+
+[tool.setuptools]
+packages = ["platform_sdk", "platform_eval"]
+
+[tool.setuptools.package-data]
+platform_eval = ["criteria/*.yaml"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

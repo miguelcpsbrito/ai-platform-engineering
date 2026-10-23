@@ -1,0 +1,17 @@
+{
+  "tags": {
+    "cost-center": {
+      "tag_key": { "@@assign": "cost-center" }
+    },
+    "tenant": {
+      "tag_key": { "@@assign": "tenant" }
+    },
+    "feature": {
+      "tag_key": { "@@assign": "feature" }
+    },
+    "approved-model": {
+      "tag_key": { "@@assign": "approved-model" },
+      "tag_value": { "@@assign": ["true"] }
+    }
+  }
+}

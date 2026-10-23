@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.build/
+build/
+labs/ch06/data/
+labs/ch03/platform/profiles.json
+tools/hclfmt/hclfmt
+tools/aws_schema.json
+.venv/

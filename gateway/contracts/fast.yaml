@@ -1,0 +1,12 @@
+alias: fast
+contract_version: 2
+purpose: classification, extraction, routing, short answers
+cost_band: 0.25
+context_window_min_tokens: 128000
+max_output_tokens_min: 4096
+latency_slo: { ttft_p99_ms: 600 }
+capabilities: [json_mode]
+data_classes_allowed: [public, internal]
+change_notice_days: 14
+cache: exact-match responses may be served from cache
+evaluation_gate: tenant suites registered for this alias

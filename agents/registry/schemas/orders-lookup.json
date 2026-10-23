@@ -1,0 +1,2 @@
+{"type": "object", "required": ["order_id"], "additionalProperties": false,
+ "properties": {"order_id": {"type": "string", "pattern": "^[0-9]{4,12}$"}}}

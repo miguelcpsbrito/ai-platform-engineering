@@ -1,0 +1,13 @@
+tenant: <stable-id>                 name: <human name>
+owner_group: <team>                 cost_center: <code>
+class: critical | standard | batch
+isolation_level: 1 | 2 | 3         data_classes: [...]
+placement: { account, index, kms_key, observability }
+aliases: [standard, fast]           premium: requires tier >= 2
+quota: { tokens_per_minute, burst, monthly_budget_usd }
+degradation: [cheaper_alias, queue, shed]
+fail_policy: open-with-ceiling | closed
+eval_suites: [evals/<suite>]        leakage_test: required
+history: [{ from, level, reason }]
+# This is the reading layout of Figure C.4. The file you commit is one key per line,
+# validated by tenancy/schema/tenant.schema.json — see gateway/tenants/*.yaml.

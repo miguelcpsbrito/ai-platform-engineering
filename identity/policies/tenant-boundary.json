@@ -1,0 +1,51 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "WorkloadServices",
+      "Effect": "Allow",
+      "Action": [
+        "s3:*", "dynamodb:*", "sqs:*", "sns:*", "lambda:*", "logs:*",
+        "cloudwatch:*", "xray:*", "kms:Decrypt", "kms:Encrypt", "kms:GenerateDataKey",
+        "secretsmanager:GetSecretValue", "aoss:APIAccessAll", "es:ESHttp*",
+        "execute-api:Invoke", "lambda:InvokeFunctionUrl", "lambda:InvokeFunction",
+        "sts:AssumeRole", "sts:TagSession",
+        "ec2:CreateNetworkInterface", "ec2:DescribeNetworkInterfaces",
+        "ec2:DeleteNetworkInterface", "ec2:AssignPrivateIpAddresses",
+        "ec2:UnassignPrivateIpAddresses"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "NoDirectModelAccess",
+      "Effect": "Deny",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream",
+        "bedrock:CreateInferenceProfile",
+        "bedrock:CreateModelInvocationJob",
+        "sagemaker:InvokeEndpoint"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "NoStaticKeysNoIdentityChanges",
+      "Effect": "Deny",
+      "Action": [
+        "iam:CreateAccessKey", "iam:CreateUser", "iam:CreateLoginProfile",
+        "iam:PutRolePermissionsBoundary", "iam:DeleteRolePermissionsBoundary",
+        "iam:AttachRolePolicy", "iam:PutRolePolicy", "iam:CreatePolicyVersion"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "NoEgressControlChanges",
+      "Effect": "Deny",
+      "Action": [
+        "route53resolver:Disassociate*", "route53resolver:Delete*",
+        "network-firewall:*", "ec2:CreateInternetGateway", "ec2:AttachInternetGateway"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

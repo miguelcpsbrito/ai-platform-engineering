@@ -1,0 +1,15 @@
+# Figure 5.9 in context: a tenant promoted from level 1 to level 2.
+tenant: proc-assist
+id: 3c1f9e2a-0b7d-4a51-9d4e-2f6a8b1c7e90
+class: standard
+isolation_level: 2
+aliases: [standard, fast]
+quota: { tokens_per_minute: 60000, monthly_budget_usd: 2500 }
+placement:
+  account: workloads-shared-prod
+  index: opensearch-serverless/proc-assist
+  kms_key: alias/tenant/proc-assist
+  observability: shared-scoped
+history:
+  - { from: 2026-02-03, level: 1, account: workloads-shared-prod }
+  - { from: 2026-07-21, level: 2, reason: "confidential pricing" }

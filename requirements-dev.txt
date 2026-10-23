@@ -1,0 +1,11 @@
+# Everything the offline test suites and local labs need. Pinned where behaviour matters.
+pytest>=8
+pyyaml>=6,<7
+jsonschema>=4.21
+duckdb>=1.1
+boto3>=1.40.70          # Converse serviceTier (Bedrock service tiers, Nov 2025)
+psycopg[binary]>=3.2
+opentelemetry-api>=1.27
+opentelemetry-sdk>=1.27
+litellm==1.85.1         # must match the proxy image pinned in gateway/terraform/proxy/app
+python-hcl2>=7

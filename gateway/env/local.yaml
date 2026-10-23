@@ -1,0 +1,9 @@
+# Overlay for the local mode of the labs: same aliases, simulated models.
+# An alias with no entry for an environment resolves to its prod entry (4.3).
+standard:
+  local:   { model: mock/model-a }
+  fallback: [same-model-cross-region, mock/model-c]
+premium:
+  local:   { model: mock/model-p, approval: use-case-tier>=2 }
+fast:
+  local:   { model: mock/model-f, cache: exact }

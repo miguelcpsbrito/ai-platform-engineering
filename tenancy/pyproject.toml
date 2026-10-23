@@ -1,0 +1,17 @@
+[project]
+name = "platform-retrieval"
+version = "0.1.0"
+description = "Tenant-scoped retrieval library from AI Platform Engineering (Chapter 5)"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+pgvector = ["psycopg[binary]>=3.2"]
+opensearch = ["opensearch-py>=2.6", "boto3>=1.35"]
+
+[tool.setuptools]
+packages = ["platform_retrieval"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

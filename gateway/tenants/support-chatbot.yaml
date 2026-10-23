@@ -1,0 +1,14 @@
+# gateway/tenants/support-chatbot.yaml
+# the tenant as config (5.2)
+tenant: support-chatbot
+identity:
+  pod_identity_role: arn:aws:iam::…:role/support-chatbot-prod
+class: critical                    # 5.2 priority classes
+# premium requires tier-2 approval (Ch. 10)
+aliases: [standard, fast]
+quota:
+  tokens_per_minute: 120000        # burst: 2x for 60s
+  # prod: escalation path, not hard stop
+  monthly_budget_usd: 9000
+# opted-in ladder, top-down
+degradation: [cheaper_alias, queue, shed]

@@ -1,0 +1,85 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyInvokeWithoutApplicationProfile",
+      "Effect": "Deny",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Null": { "bedrock:InferenceProfileArn": "true" },
+        "ArnNotLike": { "aws:PrincipalArn": ${jsonencode(invoke_exempt_principal_arns)} }
+      }
+    },
+    {
+      "Sid": "DenyNonApplicationProfiles",
+      "Effect": "Deny",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotLike": {
+          "bedrock:InferenceProfileArn": "arn:aws:bedrock:*:*:application-inference-profile/*"
+        },
+        "ArnNotLike": { "aws:PrincipalArn": ${jsonencode(invoke_exempt_principal_arns)} }
+      }
+    },
+    {
+      "Sid": "RequireApprovalTag",
+      "Effect": "Deny",
+      "Action": "bedrock:CreateInferenceProfile",
+      "Resource": "*",
+      "Condition": {
+        "Null": { "aws:RequestTag/approved-model": "true" }
+      }
+    },
+    {
+      "Sid": "RequireCostCenterTag",
+      "Effect": "Deny",
+      "Action": "bedrock:CreateInferenceProfile",
+      "Resource": "*",
+      "Condition": {
+        "Null": { "aws:RequestTag/cost-center": "true" }
+      }
+    },
+    {
+      "Sid": "OnlyPlatformSetsApproval",
+      "Effect": "Deny",
+      "Action": [
+        "bedrock:CreateInferenceProfile",
+        "bedrock:TagResource"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "ForAnyValue:StringEquals": { "aws:TagKeys": ["approved-model"] },
+        "ArnNotLike": { "aws:PrincipalArn": ${jsonencode(platform_principal_arns)} }
+      }
+    },
+    {
+      "Sid": "DenyRemovingGovernanceTags",
+      "Effect": "Deny",
+      "Action": "bedrock:UntagResource",
+      "Resource": "*",
+      "Condition": {
+        "ForAnyValue:StringEquals": {
+          "aws:TagKeys": ["approved-model", "cost-center", "tenant"]
+        },
+        "ArnNotLike": { "aws:PrincipalArn": ${jsonencode(platform_principal_arns)} }
+      }
+    },
+    {
+      "Sid": "BatchOnlyThroughPlatform",
+      "Effect": "Deny",
+      "Action": "bedrock:CreateModelInvocationJob",
+      "Resource": "*",
+      "Condition": {
+        "ArnNotLike": { "aws:PrincipalArn": ${jsonencode(platform_principal_arns)} }
+      }
+    }
+  ]
+}

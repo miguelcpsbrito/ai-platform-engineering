@@ -1,0 +1,6 @@
+# Retrieval profile (Section 7.4). The blueprint's update machinery re-certifies the
+# service through the evaluation gate whenever this file changes.
+chunking: { profile: policy-v4, max_tokens: 512, overlap_tokens: 64 }
+k: 6
+reranker: rr-2
+corpus: ${{ values.corpus }}

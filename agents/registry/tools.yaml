@@ -1,0 +1,22 @@
+apiVersion: ai-platform/v1
+kind: Tool
+metadata:
+  name: orders.lookup
+  owner: group:commerce-platform
+spec:
+  protocol: mcp
+  endpoint: https://tools.platform.internal/commerce/mcp
+  action_class: read
+  reversible: true
+  data_class: confidential
+  allowed_tiers: [1, 2, 3]
+  allowed_tenants: [cx-support, cx-warranty]
+  rate_limit: { per_task: 10, per_minute: 600 }
+  schema: schemas/orders-lookup.json
+---
+kind: Tool
+metadata: { name: refunds.issue, owner: group:payments }
+spec:
+  action_class: consequential
+  reversible: false
+  approval: { channel: payments-approvals, timeout_minutes: 30 }

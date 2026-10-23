@@ -1,0 +1,22 @@
+# Every code path that can reach retrieval, registered (Figure 5.10 caption): the leakage
+# test generates RETRIEVAL_PATHS from this file, so a new endpoint is attacked the day it
+# is registered. Kinds map to adapters in tests/leakage/paths.py.
+paths:
+  - name: platform-library
+    kind: library
+    description: Retriever.retrieve — the supported path
+  - name: library-with-forged-filter
+    kind: library-forged-filter
+    description: caller passes tenant= and filter= arguments; both must be ignored
+  - name: rag-endpoint
+    kind: http-endpoint
+    description: the RAG service's /ask endpoint, identity from the platform header
+  - name: answer-cache
+    kind: cache
+    description: exact cache in front of retrieval (Section 4.2) — keyed per tenant
+  - name: observability-export
+    kind: export
+    description: trace/sample export of the observability layer (the Chapter 10 pitfall)
+  - name: pgvector-rls
+    kind: pgvector
+    description: Postgres RLS track (Figure 5.7); runs when PLATFORM_PG_DSN is set

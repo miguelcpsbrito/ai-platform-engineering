@@ -1,0 +1,11 @@
+# Gateway runtime settings (4.5, 9.3). Environment variables override these.
+environment: prod
+regions: { primary: us-east-1, secondary: us-west-2 }
+upstream_timeout_s: 120
+max_attempts: 3           # attempts across the fallback chain, retries included
+retry_budget_ratio: 0.1   # retries may add at most 10% to upstream load (9.3)
+cache_ttl_s: 3600
+metering:
+  sink: stdout            # stdout | file | firehose
+  file: metering.jsonl
+  firehose_stream: platform-metering

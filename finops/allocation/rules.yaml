@@ -1,0 +1,11 @@
+# finops/allocation/rules.yaml — the allocation rules (Section 6.3). Every row the
+# pipeline writes carries rule_version, so a dispute names the rule that produced it.
+# Change a rule → bump the version → re-run the month; old numbers stay reproducible.
+rule_version: alloc-2026.10-1
+idle_bar: 0.70            # tenants pay reserved capacity at max(utilization, idle_bar)
+shared_floor_usd: 400     # every tenant pays at least this share of platform cost
+platform_cost_center: platform
+bedrock_service: AmazonBedrock
+patterns:                 # CUR usage_type patterns (LIKE syntax)
+  invocation: ["%input-tokens%", "%output-tokens%", "%cache-read%", "%cache-write%"]
+  provisioned: ["%ProvisionedThroughput%"]

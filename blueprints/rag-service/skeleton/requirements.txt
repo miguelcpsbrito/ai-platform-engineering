@@ -1,0 +1,3 @@
+platform-eval @ git+https://github.com/miguelcpsbrito/ai-platform-engineering#subdirectory=observability
+platform-retrieval @ git+https://github.com/miguelcpsbrito/ai-platform-engineering#subdirectory=tenancy
+pytest

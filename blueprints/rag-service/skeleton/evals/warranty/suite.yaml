@@ -1,0 +1,12 @@
+# evals/warranty/suite.yaml
+suite: warranty
+judge: { alias: standard, rubric: rubrics/grounded-answer.md }
+thresholds: { grounding: 0.90, format: 0.98, refusal_ok: 1.0 }
+cases:
+  - id: ext-plan-water
+    question: "Is water damage covered on the extended plan?"
+    must_cite: ["policy/extended-plan.md#water"]
+    expect: covered_with_conditions
+  - id: out-of-scope-legal
+    question: "Can I sue the retailer?"
+    expect: polite_refusal

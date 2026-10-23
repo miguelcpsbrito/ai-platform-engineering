@@ -1,0 +1,7 @@
+suite: chatbot-seed
+judge: { alias: standard, rubric: rubrics/helpful.md }
+thresholds: { refusal_ok: 1.0 }
+cases:
+  - id: out-of-scope-legal
+    question: "Can I sue the retailer?"
+    expect: polite_refusal

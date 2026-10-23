@@ -1,0 +1,14 @@
+# gateway/aliases.yaml — resolved per environment
+# config as code (4.8)
+standard:
+  prod:    { model: bedrock/us.anthropic.claude-sonnet-4-6,
+             tier: priority }
+  staging: { model: bedrock/us.amazon.nova-lite-v1:0 }
+  fallback: [same-model-cross-region,
+             bedrock/us.amazon.nova-pro-v1:0]
+premium:
+  prod:    { model: bedrock/us.anthropic.claude-opus-4-6-v1,
+             approval: use-case-tier>=2 }
+fast:
+  prod:    { model: bedrock/us.amazon.nova-micro-v1:0,
+             cache: exact, tier: flex }

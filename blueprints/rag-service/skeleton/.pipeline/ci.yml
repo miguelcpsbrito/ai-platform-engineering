@@ -1,0 +1,42 @@
+# Blueprint pipeline (Figure 7.7) as GitHub Actions: the stages that differ from classic
+# CI/CD. The evaluation gate runs on every change that can alter an answer. This file is
+# copied without templating (template.yaml), so GitHub expressions survive scaffolding.
+name: service-pipeline
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      environment: { description: "promote to", required: true, default: staging }
+env:
+  PLATFORM_EVAL: pip install "platform-eval @ git+https://github.com/miguelcpsbrito/ai-platform-engineering#subdirectory=observability"
+jobs:
+  unit_tests:                     # still exist; still necessary, no longer sufficient
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -r requirements.txt && pytest -q tests
+  eval_suite:                     # the AI quality gate
+    needs: unit_tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -r requirements.txt && ${{ env.PLATFORM_EVAL }}
+      - name: Evaluation gate (regression against baseline, not just absolutes)
+        run: platform-eval evals/warranty/suite.yaml --service src.service --baseline evals/warranty/baseline.json
+        env:
+          PLATFORM_URL: ${{ secrets.PLATFORM_URL }}
+          PLATFORM_KEY: ${{ secrets.PLATFORM_EVAL_KEY }}
+  promote:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -r requirements.txt && ${{ env.PLATFORM_EVAL }}
+      - name: Re-run the suite against THIS environment's model
+        run: platform-eval evals/warranty/suite.yaml --service src.service --baseline evals/warranty/baseline.json
+        env:
+          PLATFORM_URL: ${{ vars.PLATFORM_URL }}
+          PLATFORM_KEY: ${{ secrets.PLATFORM_EVAL_KEY }}
+      # Canary (5% traffic; gate on errors, latency, sampled quality) is deployer-specific
+      # — Argo Rollouts, CodeDeploy or Lambda aliases. Wire your deployer here.

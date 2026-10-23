@@ -1,0 +1,32 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: batch-service
+  title: Batch service (platform blueprint v3)
+  description: Offline batch job over a dataset through the platform's batch path.
+  tags: [ai-platform, batch, blueprint]
+  annotations:
+    ai-platform/blueprint-version: "3.0.0"
+spec:
+  owner: group:ai-platform
+  type: service
+  parameters:
+    - title: Service
+      required: [name, tenant, alias, riskTier]
+      properties:
+        name:     { type: string, pattern: "^[a-z][a-z0-9-]{2,40}$" }
+        tenant:   { type: string, ui:field: OwnedTenantPicker }
+        alias:    { type: string, enum: [fast, standard, premium] }
+        riskTier: { type: string, ui:field: IntakeClassifier }
+  steps:
+  - id: fetch
+    action: fetch:template
+    input: { url: ./skeleton, values: "${{ parameters }}" }
+  - id: publish
+    action: publish:github
+    input: { repoUrl: "github.com?repo=${{ parameters.name }}" }
+  - id: register
+    action: catalog:register
+    input:
+      repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+      catalogInfoPath: /catalog-info.yaml

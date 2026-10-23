@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/miguelcpsbrito/ai-platform-engineering/tenancy/schema/tenant.schema.json",
+  "title": "Tenant record (Figures 5.3, 5.9 and C.4)",
+  "description": "One reviewable, versioned file per tenant. Onboarding is a pull request that adds it.",
+  "type": "object",
+  "required": ["tenant", "class", "aliases", "quota"],
+  "additionalProperties": false,
+  "properties": {
+    "tenant": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,62}$",
+               "description": "Stable tenant ID: never an account number, never a team name a reorg can change (5.6)."},
+    "id": {"type": "string", "format": "uuid"},
+    "name": {"type": "string"},
+    "owner_group": {"type": "string"},
+    "cost_center": {"type": "string"},
+    "identity": {
+      "type": "object", "additionalProperties": false, "minProperties": 1,
+      "properties": {
+        "pod_identity_role": {"type": "string"},
+        "workload_role": {"type": "string"},
+        "local_api_key": {"type": "string", "description": "Local labs only; never in a production record."}
+      }
+    },
+    "class": {"enum": ["critical", "standard", "batch"]},
+    "risk_tier": {"type": "integer", "minimum": 1, "maximum": 3},
+    "isolation_level": {"type": "integer", "minimum": 1, "maximum": 3},
+    "data_classes": {"type": "array", "items": {"enum": ["public", "internal", "confidential", "regulated"]}},
+    "aliases": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "quota": {
+      "type": "object", "additionalProperties": false, "required": ["tokens_per_minute"],
+      "properties": {
+        "tokens_per_minute": {"type": "integer", "minimum": 1},
+        "burst": {"type": "number", "minimum": 1},
+        "monthly_budget_usd": {"type": "number", "minimum": 0}
+      }
+    },
+    "degradation": {"type": "array", "items": {"enum": ["cheaper_alias", "queue", "shed"]}},
+    "fail_policy": {"enum": ["open-with-ceiling", "closed"]},
+    "eval_suites": {"type": "array", "items": {"type": "string"}},
+    "leakage_test": {"enum": ["required", "not-applicable"]},
+    "placement": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "account": {"type": "string"}, "index": {"type": "string"},
+        "kms_key": {"type": "string"}, "observability": {"enum": ["shared-scoped", "dedicated"]}
+      }
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object", "required": ["from"],
+        "properties": {"from": {"type": "string"}, "level": {"type": "integer"},
+                       "account": {"type": "string"}, "reason": {"type": "string"}}
+      }
+    }
+  },
+  "allOf": [
+    {"if": {"properties": {"isolation_level": {"const": 3}}, "required": ["isolation_level"]},
+     "then": {"required": ["placement"]}},
+    {"if": {"properties": {"data_classes": {"contains": {"const": "regulated"}}}, "required": ["data_classes"]},
+     "then": {"properties": {"isolation_level": {"const": 3}}, "required": ["isolation_level"]}}
+  ]
+}

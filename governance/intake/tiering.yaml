@@ -1,0 +1,23 @@
+# governance/intake/tiering.yaml
+# committee-owned, platform-enforced
+version: 9
+rules:
+  - tier: 3
+    when_any:
+      - data_class: regulated
+      - decision_consequence: consequential
+      - audience: external-autonomous
+  - tier: 2
+    when_any:
+      - data_class: confidential
+      - audience: external-with-human-review
+      - tools_risk_class: write
+  - tier: 1
+    default: true
+controls:
+  1: { guardrail_profile: base, eval_gate: seed, review: none }
+  2: { guardrail_profile: enhanced, eval_gate: team-suite,
+       review: { type: lightweight, sla_business_days: 2 } }
+  3: { guardrail_profile: strict, eval_gate: team-suite,
+       review: { type: committee }, dpia: required,
+       isolation_min_level: 3 }

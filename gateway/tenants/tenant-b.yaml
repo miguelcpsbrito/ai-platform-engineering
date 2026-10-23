@@ -1,0 +1,14 @@
+# Lab tenant (labs/ch04, labs/ch05). Different quota class from tenant-a.
+tenant: tenant-b
+id: 7f3a2c1e-9b8d-4f6a-a5e4-3c2b1a0f9e8d
+identity:
+  workload_role: arn:aws:iam::${PLATFORM_ACCOUNT_ID}:role/lab-tenant-b
+  local_api_key: lab-key-tenant-b
+class: critical
+risk_tier: 2
+aliases: [standard, fast, premium]
+quota:
+  tokens_per_minute: 200000
+  monthly_budget_usd: 200
+degradation: [queue, shed]
+fail_policy: open-with-ceiling

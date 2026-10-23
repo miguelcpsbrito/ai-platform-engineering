@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name }}
+  annotations:
+    ai-platform/tenant: ${{ values.tenant }}
+    ai-platform/alias: ${{ values.alias }}
+    ai-platform/risk-tier: "${{ values.riskTier }}"
+    ai-platform/blueprint: rag-service@7.2.0
+    ai-platform/eval-suite: evals/warranty
+spec:
+  type: service
+  lifecycle: production
+  owner: group:${{ values.tenant }}

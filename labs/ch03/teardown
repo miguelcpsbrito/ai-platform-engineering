@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# labs/ch03/teardown — Table 3.5 step 5. Destroys the platform, then the org layer, then
+# checks that nothing billable tagged lab=ai-platform-ch03 remains.
+set -euo pipefail
+cd "$(dirname "$0")"
+REGION=${AWS_REGION:-us-east-1}
+terraform -chdir=platform destroy -auto-approve
+if [ "${KEEP_ORG:-0}" != "1" ]; then
+  echo "Destroying the org layer needs management-account credentials (AWS_PROFILE=${ORG_PROFILE:-unset})."
+  AWS_PROFILE=${ORG_PROFILE:-${AWS_PROFILE:-default}} terraform -chdir=org destroy -auto-approve
+fi
+LEFT=$(aws resourcegroupstaggingapi get-resources --region "$REGION" \
+  --tag-filters Key=lab,Values=ai-platform-ch03 --query 'ResourceTagMappingList[].ResourceARN' --output text)
+if [ -n "$LEFT" ]; then
+  echo "FAIL  tagged resources remain:"; echo "$LEFT" | tr '\t' '\n'; exit 1
+fi
+NAT=$(aws ec2 describe-nat-gateways --region "$REGION" --filter Name=tag:lab,Values=ai-platform-ch03 \
+  Name=state,Values=available,pending --query 'length(NatGateways)')
+[ "$NAT" = "0" ] || { echo "FAIL  $NAT NAT gateways still running"; exit 1; }
+echo "PASS  nothing billable remains from labs/ch03"

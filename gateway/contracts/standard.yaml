@@ -1,0 +1,11 @@
+alias: standard
+contract_version: 3
+purpose: general reasoning, drafting, RAG answers
+cost_band: 1.0 (reference)   # premium ≈ 5.0, fast ≈ 0.25
+context_window_min_tokens: 200000
+max_output_tokens_min: 8192
+latency_slo: { ttft_p99_ms: 1500 }
+capabilities: [tool_use, json_mode, vision]
+data_classes_allowed: [public, internal, confidential]
+change_notice_days: 14   # behaviour changes behind the alias
+evaluation_gate: tenant suites registered for this alias

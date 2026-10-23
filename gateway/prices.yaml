@@ -1,0 +1,20 @@
+# USD per 1M tokens, on-demand, us-east-1, symbolic and dated October 2026.
+# Geographic (us.) profiles of Claude 4.5+ models carry a 10% premium over global.
+# labs/*/CURRENT.md and the AWS pricing page supersede these numbers.
+as_of: 2026-10
+models:
+  us.anthropic.claude-sonnet-4-6:   { input: 3.30, output: 16.50, cached_read: 0.33 }
+  us.anthropic.claude-opus-4-6-v1:  { input: 5.50, output: 27.50, cached_read: 0.55 }
+  us.amazon.nova-pro-v1:0:          { input: 0.80, output: 3.20 }
+  us.amazon.nova-lite-v1:0:         { input: 0.06, output: 0.24 }
+  us.amazon.nova-micro-v1:0:        { input: 0.035, output: 0.14 }
+  mock/model-a:                     { input: 3.00, output: 15.00 }
+  mock/model-b:                     { input: 1.00, output: 5.00 }
+  mock/model-c:                     { input: 0.80, output: 3.20 }
+  mock/model-f:                     { input: 0.035, output: 0.14 }
+  mock/model-p:                     { input: 5.00, output: 25.00 }
+  mock/model-weak:                  { input: 0.50, output: 2.00 }
+tiers:   # multipliers on on-demand, symbolic
+  default: 1.0
+  priority: 1.75
+  flex: 0.5

@@ -1,0 +1,59 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyServicesOutsideApprovedRegions",
+      "Effect": "Deny",
+      "NotAction": [
+        "bedrock:*",
+        "account:*",
+        "aws-portal:*",
+        "budgets:*",
+        "ce:*",
+        "cloudfront:*",
+        "cur:*",
+        "globalaccelerator:*",
+        "health:*",
+        "iam:*",
+        "kms:*",
+        "organizations:*",
+        "pricing:*",
+        "route53:*",
+        "route53domains:*",
+        "s3:GetAccountPublicAccessBlock",
+        "s3:ListAllMyBuckets",
+        "shield:*",
+        "sso:*",
+        "sts:*",
+        "support:*",
+        "tag:*",
+        "trustedadvisor:*",
+        "waf:*"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": { "aws:RequestedRegion": ${jsonencode(approved_regions)} },
+        "ArnNotLike": { "aws:PrincipalArn": ${jsonencode(break_glass_principal_arns)} }
+      }
+    },
+    {
+      "Sid": "DenyBedrockOutsideApprovedRegionsExceptGeoProfiles",
+      "Effect": "Deny",
+      "Action": "bedrock:*",
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": { "aws:RequestedRegion": ${jsonencode(approved_regions)} },
+        "ArnNotLike": { "bedrock:InferenceProfileArn": ${jsonencode(approved_profile_arn_patterns)} }
+      }
+    },
+    {
+      "Sid": "DenyGlobalCrossRegionInference",
+      "Effect": "Deny",
+      "Action": "bedrock:*",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": { "aws:RequestedRegion": "unspecified" }
+      }
+    }
+  ]
+}

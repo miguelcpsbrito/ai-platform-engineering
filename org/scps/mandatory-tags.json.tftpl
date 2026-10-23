@@ -1,0 +1,44 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "RequireCostCenterOnAIResources",
+      "Effect": "Deny",
+      "Action": [
+        "bedrock:CreateAgent",
+        "bedrock:CreateFlow",
+        "bedrock:CreateGuardrail",
+        "bedrock:CreateKnowledgeBase",
+        "bedrock:CreateModelCustomizationJob",
+        "bedrock:CreateModelImportJob",
+        "bedrock:CreateModelInvocationJob",
+        "bedrock:CreateProvisionedModelThroughput",
+        "sagemaker:CreateEndpoint",
+        "sagemaker:CreateEndpointConfig",
+        "sagemaker:CreateInferenceComponent",
+        "sagemaker:CreateTrainingJob"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Null": { "aws:RequestTag/cost-center": "true" }
+      }
+    },
+    {
+      "Sid": "RequireTenantOnAIResources",
+      "Effect": "Deny",
+      "Action": [
+        "bedrock:CreateAgent",
+        "bedrock:CreateFlow",
+        "bedrock:CreateKnowledgeBase",
+        "bedrock:CreateModelInvocationJob",
+        "bedrock:CreateProvisionedModelThroughput",
+        "sagemaker:CreateEndpoint",
+        "sagemaker:CreateInferenceComponent"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "Null": { "aws:RequestTag/tenant": "true" }
+      }
+    }
+  ]
+}

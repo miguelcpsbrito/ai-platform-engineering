@@ -1,0 +1,12 @@
+alias: premium
+contract_version: 2
+purpose: hardest reasoning, long documents, agent planning
+cost_band: 5.0
+context_window_min_tokens: 200000
+max_output_tokens_min: 16384
+latency_slo: { ttft_p99_ms: 3000 }
+capabilities: [tool_use, json_mode, vision]
+data_classes_allowed: [public, internal, confidential]
+change_notice_days: 14
+approval: use-case risk tier 2 or higher (Chapter 10)
+evaluation_gate: tenant suites registered for this alias

@@ -1,0 +1,51 @@
+# observability/collector — ADOT collector config (Section 8.2). OTLP in from SDKs and the
+# gateway; content attributes dropped before export; traces to the CloudWatch OTLP
+# endpoint (X-Ray) with SigV4, metrics to CloudWatch via EMF. The X-Ray SDKs are in
+# maintenance mode (February 2026) — OpenTelemetry is the only instrumentation path.
+extensions:
+  sigv4auth:
+    region: ${env:AWS_REGION}
+    service: xray
+  health_check: {}
+
+receivers:
+  otlp:
+    protocols:
+      grpc: { endpoint: 0.0.0.0:4317 }
+      http: { endpoint: 0.0.0.0:4318 }
+
+processors:
+  memory_limiter: { check_interval: 1s, limit_percentage: 80, spike_limit_percentage: 25 }
+  batch: { timeout: 5s, send_batch_size: 512 }
+  # Content never leaves the process on spans (Table 8.3): drop it even if an app sets it.
+  attributes/redact:
+    actions:
+      - { key: gen_ai.prompt, action: delete }
+      - { key: gen_ai.completion, action: delete }
+      - { key: gen_ai.input.messages, action: delete }
+      - { key: gen_ai.output.messages, action: delete }
+      - { key: gen_ai.system_instructions, action: delete }
+  resource/platform:
+    attributes:
+      - { key: platform.environment, value: "${env:PLATFORM_ENV}", action: upsert }
+
+exporters:
+  otlphttp/xray:
+    traces_endpoint: https://xray.${env:AWS_REGION}.amazonaws.com/v1/traces
+    auth: { authenticator: sigv4auth }
+  awsemf:
+    namespace: Platform/GenAI
+    log_group_name: /platform/observability/metrics
+    dimension_rollup_option: NoDimensionRollup
+
+service:
+  extensions: [sigv4auth, health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, attributes/redact, resource/platform, batch]
+      exporters: [otlphttp/xray]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, resource/platform, batch]
+      exporters: [awsemf]

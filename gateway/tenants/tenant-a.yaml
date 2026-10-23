@@ -1,0 +1,14 @@
+# Lab tenant (labs/ch04, labs/ch05). Small quota on purpose: the quota proof saturates it.
+tenant: tenant-a
+id: 0b9f4c7e-1d2a-4e8b-9c3f-5a6d7e8f9a01
+identity:
+  workload_role: arn:aws:iam::${PLATFORM_ACCOUNT_ID}:role/lab-tenant-a
+  local_api_key: lab-key-tenant-a
+class: standard
+risk_tier: 1
+aliases: [standard, fast]
+quota:
+  tokens_per_minute: 20000
+  monthly_budget_usd: 50
+degradation: [cheaper_alias, shed]
+fail_policy: open-with-ceiling

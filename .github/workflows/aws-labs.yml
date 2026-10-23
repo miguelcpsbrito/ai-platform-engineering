@@ -1,0 +1,55 @@
+# AWS integration: deploy a lab into a sandbox account, run its proofs, tear it down and
+# fail if anything billable remains. Manual only; needs an OIDC role in a lab-OU account
+# (see labs/ch03/README.md, "Running the lab from CI"). Each successful run updates the
+# "Applied on AWS" column of STATUS.md.
+name: aws-labs
+on:
+  workflow_dispatch:
+    inputs:
+      lab:
+        description: "Lab to run"
+        required: true
+        default: ch03
+        type: choice
+        options: [ch03]
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: aws-labs
+  cancel-in-progress: false
+
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    environment: aws-sandbox
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_LAB_ROLE_ARN }}
+          aws-region: us-east-1
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~1.13.0"
+          terraform_wrapper: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - name: Build the gateway package and the profile list
+        run: |
+          make -C gateway package
+          (cd gateway && python -m platform_gateway.profiles --env prod) > labs/ch03/platform/profiles.json
+      - name: Apply (steps 2–4; the org layer is applied once, by hand, from the management account)
+        run: |
+          terraform -chdir=labs/ch03/platform init -input=false
+          terraform -chdir=labs/ch03/platform apply -auto-approve -input=false
+      - name: Prove
+        run: ./labs/ch03/prove.sh
+      - name: Teardown (always)
+        if: always()
+        run: KEEP_ORG=1 ./labs/ch03/teardown

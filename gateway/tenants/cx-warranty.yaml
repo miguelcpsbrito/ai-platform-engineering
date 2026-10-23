@@ -1,0 +1,16 @@
+# The warranty assistant's tenant (Figures 7.4 and 10.5).
+tenant: cx-warranty
+id: 5e2d7c90-4a1b-4f3e-8d6c-9b0a1e2f3c4d
+cost_center: cx
+identity:
+  pod_identity_role: arn:aws:iam::${PLATFORM_ACCOUNT_ID}:role/cx-warranty-prod
+class: standard
+risk_tier: 1
+data_classes: [internal, confidential]
+aliases: [standard, fast]
+quota:
+  tokens_per_minute: 80000
+  monthly_budget_usd: 6000
+degradation: [cheaper_alias, queue]
+eval_suites: [evals/warranty]
+leakage_test: required
