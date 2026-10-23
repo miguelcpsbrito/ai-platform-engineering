@@ -9,3 +9,4 @@ opentelemetry-api>=1.27
 opentelemetry-sdk>=1.27
 litellm==1.85.1         # must match the proxy image pinned in gateway/terraform/proxy/app
 python-hcl2>=7
+openpyxl>=3.1             # finops/cost-model spreadsheet builder
