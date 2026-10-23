@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import pathlib
+import re
 
 import pytest
 
@@ -56,6 +57,9 @@ def _pg_store(d: TenantDirectory):
                          SELECT count(*)::int FROM regexp_split_to_table(lower(q), '\\W+') w
                          WHERE w <> '' AND position(w IN lower(c)) > 0 $$""")
         c.execute(ddl)
+        pw = re.search(r"password=(\S+)", dsn)
+        if pw:   # password auth (CI service container): the app role needs one too
+            c.execute(f"ALTER ROLE platform_app PASSWORD '{pw.group(1)}'")
         for tid, docs in CORPUS.items():
             for i, text in enumerate(docs):
                 emb = str(embed(text)) if has_vector else "{" + ",".join(map(str, embed(text))) + "}"
