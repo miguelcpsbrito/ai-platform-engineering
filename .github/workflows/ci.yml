@@ -33,9 +33,19 @@ jobs:
           cache-dependency-path: requirements-dev.txt
       - run: pip install -r requirements-dev.txt
       - name: Unit, conformance, restore and leakage suites (pgvector + RLS track included)
-        run: make test
+        run: |
+          set -o pipefail
+          make test 2>&1 | tee pytest.log
+      - name: Surface test failures as annotations
+        if: failure()
+        run: grep -E "^(FAILED|ERROR)|^E  " pytest.log | head -40 | sed 's/^/::error::/' || true
       - name: Local tracks of the labs
-        run: make labs-local
+        run: |
+          set -o pipefail
+          make labs-local 2>&1 | tee labs.log
+      - name: Surface lab failures as annotations
+        if: failure()
+        run: grep -E "FAIL|Error|Traceback" labs.log | head -40 | sed 's/^/::error::/' || true
 
   terraform:
     runs-on: ubuntu-latest

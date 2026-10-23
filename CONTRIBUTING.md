@@ -15,6 +15,6 @@ The bar a change must clear:
 
 1. A module change ships with its test, and `make test tf-offline` passes.
 2. A lab change ships with its `CURRENT.md` update.
-3. Nothing merges that makes a chapter's claim untrue without a matching erratum in
-   `STATUS.md` ("Corrections this repository forced on the book").
+3. Nothing merges that makes a chapter's claim untrue without a matching erratum for
+   the book.
 4. Terraform is formatted (`terraform fmt`) and validates; prices and quotas carry a date.

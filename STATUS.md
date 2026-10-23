@@ -29,19 +29,3 @@ this table and the lab's `CURRENT.md`.
 | `agents/` | Registry, budgets, kill switch, approvals, credentials | 9 tests | n/a | not yet | No AgentCore deployment module; readiness item 6 not covered |
 | `portal/` | Thin portal | via ch07 lab | n/a | n/a | Backstage track is documented, not packaged |
 | `sre/` | RB-1 … RB-5 | game day uses RB-2 | n/a | n/a | — |
-
-## Corrections this repository forced on the book
-
-Building the code found defects in the printed text. They are fixed here and in the
-manuscript; readers of earlier drafts should prefer the repository.
-
-1. **Figure 3.1** — `CreateModelInvocationJob` carries no `bedrock:InferenceProfileArn`
-   key, so a `Null` test on that key denied every batch job. Batch is now gated by
-   principal. A single `Null` block with two tag keys ANDs them (it denied only when
-   both tags were missing); each tag is now its own statement. Only platform principals
-   may set `approved-model`.
-2. **Figure 5.7** — after a `SET LOCAL` ends, `current_setting('app.tenant_id', true)`
-   returns `''`, not `NULL`, on the same pooled connection, and `''::uuid` raises. The
-   policy now uses `NULLIF(..., '')`.
-3. **Figure 6.4** — the query referenced columns that Figure 6.5 does not define, and
-   divided by zero for rows without conversations.
