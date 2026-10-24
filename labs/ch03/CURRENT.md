@@ -1,6 +1,6 @@
 # labs/ch03 — CURRENT (release 0.1.0, October 2026)
 
-This file supersedes any number printed in the book. Symbolic list prices, us-east-1.
+Dated estimate; the AWS pricing pages are the authority. Symbolic list prices, us-east-1.
 
 | Item | Unit price | Lab quantity | Per day |
 |---|---|---|---|
